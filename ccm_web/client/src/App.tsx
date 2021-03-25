@@ -4,9 +4,10 @@ import { Breadcrumbs, Link, makeStyles, Typography } from '@material-ui/core'
 import NavigateNextIcon from '@material-ui/icons/NavigateNext'
 
 import ConsumerTest from './components/ConsumerTest'
+import useGlobals from './hooks/useGlobals'
+import allFeatures from './models/FeatureUIData'
 import Home from './pages/Home'
 import './App.css'
-import allFeatures from './models/FeatureUIData'
 
 const useStyles = makeStyles((theme) => ({
   breadcrumbs: {
@@ -28,12 +29,29 @@ function HomeBreadcrumb (isLink: boolean): JSX.Element {
     : (typography)
 }
 
-function App (): JSX.Element {
+interface AppProps {
+  ltiKey: string | undefined
+}
+
+function App (props: AppProps): JSX.Element {
   const classes = useStyles()
   const features = allFeatures
 
+  const [globals, isAuthenticated, loading, error] = useGlobals(props.ltiKey)
+  if (isAuthenticated === undefined || loading) return <div className='App'><p>Loading...</p></div>
+
+  if (error !== undefined) console.error(error)
+  if (!isAuthenticated) {
+    return (
+      <div className='App'>
+        <p>You were not properly authenticated to the application.</p>
+      </div>
+    )
+  }
+
   return (
     <div className='App'>
+      <>
       <Router>
         <div className={classes.breadcrumbs}>
           <Route>
@@ -65,7 +83,8 @@ function App (): JSX.Element {
           <Route render={() => (<div><em>Under Construction</em></div>)} />
         </Switch>
       </Router>
-      <ConsumerTest/>
+      <ConsumerTest ltiKey={props.ltiKey} />
+      </>
     </div>
   )
 }
