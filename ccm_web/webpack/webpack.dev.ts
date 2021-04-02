@@ -14,7 +14,12 @@ const devConfig: webpack.Configuration = merge(commonConfig, {
     disableHostCheck: true,
     writeToDisk: true,
     proxy: {
-      '/': 'http://localhost:4010'
+      // Backend API
+      '/api': 'http://localhost:4000',
+      // ltijs internals
+      '/lti': 'http://localhost:4000',
+      '/login': 'http://localhost:4000',
+      '/keys': 'http://localhost:4000'
     }
   }
 })
