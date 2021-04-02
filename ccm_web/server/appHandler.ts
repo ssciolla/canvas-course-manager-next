@@ -83,8 +83,6 @@ class AppHandler {
       return provider.redirect(res, `http://localhost:${server.clientPort}`)
     })
 
-    console.log(provider.app._router.stack)
-
     await provider.deploy({ port: server.port })
 
     await provider.registerPlatform({
