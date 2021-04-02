@@ -1,5 +1,6 @@
 interface ServerConfig {
   port: number
+  clientPort: number
 }
 
 interface LTIConfig {
@@ -25,7 +26,7 @@ export interface Config {
 }
 
 const isString = (v: unknown): v is string => typeof v === 'string'
-const isNumber = (v: unknown): v is number => typeof v === 'number'
+const isNumber = (v: unknown): v is number => typeof v === 'number' && !isNaN(v)
 
 function validate<T> (
   key: string,
@@ -49,7 +50,8 @@ export function validateConfig (env: Record<string, unknown>): Config | undefine
 
   try {
     server = {
-      port: validate<number>('PORT', Number(env.PORT), isNumber, 4000)
+      port: validate<number>('PORT', Number(env.PORT), isNumber, 4000),
+      clientPort: validate<number>('CLIENT_PORT', Number(env.CLIENT_PORT), isNumber, 4010)
     }
     lti = {
       encryptionKey: validate<string>('LTI_ENCRYPTION_KEY', env.LTI_ENCRYPTION_KEY, isString, 'LTIKEY'),

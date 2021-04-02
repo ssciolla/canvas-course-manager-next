@@ -1,16 +1,10 @@
 import path from 'path'
 
-import { NextHandleFunction } from 'connect'
-import express from 'express'
 import type { Express, Request, Response, Router } from 'express'
 import { IdToken, Provider } from 'ltijs'
 import Database from 'ltijs-sequelize'
-import webpack from 'webpack'
-import webpackDevMiddleware from 'webpack-dev-middleware'
-import type { WebpackDevMiddleware } from 'webpack-dev-middleware'
 
 import { Config } from './config'
-import devWebpackConfig from '../webpack/webpack.dev'
 
 interface DevOptions {
   isDev: true
@@ -19,11 +13,6 @@ interface DevOptions {
 interface ProdOptions {
   isDev: false
   staticPath: string
-}
-
-interface WebpackDevOutput {
-  middleware: WebpackDevMiddleware & NextHandleFunction
-  publicPath: string
 }
 
 class AppHandler {
@@ -41,22 +30,6 @@ class AppHandler {
     this.apiRouter = apiRouter
   }
 
-  /* TO DO: Investigate some way to dynamically import webpack stuff? */
-  static setupWebpackMiddleware (): WebpackDevOutput {
-    console.log('Setting up webpack-dev-middleware...')
-
-    const publicPath = devWebpackConfig.output?.publicPath
-    if (publicPath === undefined) throw Error('Webpack publicPath was not properly defined!')
-
-    const compiler = webpack(devWebpackConfig)
-    const webpackDevMid = webpackDevMiddleware(compiler, {
-      publicPath: String(publicPath),
-      // Just copies what's used in memory to client/build (changing doesn't do anything)
-      writeToDisk: true
-    })
-    return { middleware: webpackDevMid, publicPath: String(publicPath) }
-  }
-
   // ltijs docs: https://cvmcosta.me/ltijs/#/
   async setupLTI (): Promise<Express> {
     const { server, db, lti } = this.config
@@ -68,13 +41,17 @@ class AppHandler {
       { host: db.host, dialect: 'postgres', logging: false }
     )
 
-    let serverAddon
+    let appRoute
+    let devMode
     let staticPath
+    const cookieOptions = { secure: true, sameSite: 'None' }
     if (this.envOptions.isDev) {
-      const output = AppHandler.setupWebpackMiddleware()
-      serverAddon = (app: Express) => app.use(output.middleware)
-      staticPath = output.publicPath
+      // Set to something besides '/' so it doesn't conflict with client server
+      appRoute = '/lti'
+      // Setting devMode to true because cookies seem to be lost during proxy?
+      devMode = true
     } else {
+      appRoute = '/'
       staticPath = this.envOptions.staticPath
     }
 
@@ -83,17 +60,14 @@ class AppHandler {
       { plugin: dbPlugin },
       {
         // Reserved routes
-        appRoute: '/',
+        appRoute,
         loginRoute: '/login',
         keysetRoute: '/keys',
         // Set secure to true if the testing platform is in a different domain and https is being used
         // Set sameSite to 'None' if the testing platform is in a different domain and https is being used
-        cookies: {
-          secure: true,
-          sameSite: 'None'
-        },
-        serverAddon: serverAddon,
-        staticPath: staticPath
+        cookies: cookieOptions,
+        staticPath,
+        devMode
       }
     )
 
@@ -102,11 +76,14 @@ class AppHandler {
     // Set lti launch callback
     // When receiving successful LTI launch redirects to app.
     provider.onConnect(async (token: IdToken, req: Request, res: Response) => {
+      console.log(token)
       if (!this.envOptions.isDev) {
         return res.sendFile(path.join(this.envOptions.staticPath, 'index.html'))
       }
-      provider.redirect(res, '/')
+      return provider.redirect(res, `http://localhost:${server.clientPort}`)
     })
+
+    console.log(provider.app._router.stack)
 
     await provider.deploy({ port: server.port })
 
