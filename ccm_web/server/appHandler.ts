@@ -50,7 +50,7 @@ class AppHandler {
       // Setting devMode to true because cookies seem to be lost during proxy?
       devMode = true
     } else {
-      appRoute = ''
+      appRoute = '/'
       staticPath = this.envOptions.staticPath
     }
 
