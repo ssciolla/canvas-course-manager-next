@@ -41,17 +41,13 @@ class AppHandler {
       { host: db.host, dialect: 'postgres', logging: false }
     )
 
-    let appRoute
     let devMode
     let staticPath
     const cookieOptions = { secure: true, sameSite: 'None' }
     if (this.envOptions.isDev) {
-      // Set to something besides '/' so it doesn't conflict with client server
-      appRoute = '/lti'
       // Setting devMode to true because cookies seem to be lost during proxy?
       devMode = true
     } else {
-      appRoute = '/'
       staticPath = this.envOptions.staticPath
     }
 
@@ -60,7 +56,7 @@ class AppHandler {
       { plugin: dbPlugin },
       {
         // Reserved routes
-        appRoute,
+        appRoute: '/',
         loginRoute: '/login',
         keysetRoute: '/keys',
         // Set secure to true if the testing platform is in a different domain and https is being used
