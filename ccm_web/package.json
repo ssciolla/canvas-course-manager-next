@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "dev:server": "nodemon --config nmon_config.json server/app.ts",
-    "dev:client": "webpack serve --config webpack/webpack.dev.ts",
+    "dev:client": "webpack --watch --config webpack/webpack.dev.ts",
     "dev": "npm run dev:server & npm run dev:client",
     "build-client": "webpack --config webpack/webpack.prod.ts",
     "build-server": "tsc",
