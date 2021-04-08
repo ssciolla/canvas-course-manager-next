@@ -7,7 +7,6 @@ services:
       context: ./ccm_web/
       args:
         - SERVER_PORT=4000
-        - PATH_VARIABLE=/base
     environment:
       - PORT=4000
       - NODE_ENV=production
