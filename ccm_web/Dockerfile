@@ -12,6 +12,7 @@ COPY . .
 ARG SERVER_PORT
 EXPOSE ${SERVER_PORT}
 ARG PATH_VARIABLE
+ARG ENV
 RUN echo "${PATH_VARIABLE}" 
 # Expose debug port
 EXPOSE 4010
@@ -19,7 +20,7 @@ EXPOSE 4010
 # Build stage (build client and compile server to JS)
 FROM base AS build
 WORKDIR /build/
-COPY --from=base /base/dist ./
+COPY --from=base /base ./
 RUN npm run preprod
 
 # Prod stage
