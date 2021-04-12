@@ -12,7 +12,7 @@ if (config === undefined) process.exit(1)
 const isDev = NODE_ENV !== 'production'
 
 const envOptions = isDev
-  ? { isDev }
+  ? { isDev, staticPath: path.join(__dirname, '..', 'dist', 'client') }
   : { isDev, staticPath: path.join(__dirname, '..', 'client') }
 
 const appHandler = new AppHandler(config, envOptions, apiRouter)

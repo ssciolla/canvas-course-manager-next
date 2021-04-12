@@ -12,8 +12,6 @@ COPY . .
 ARG SERVER_PORT
 EXPOSE ${SERVER_PORT}
 
-# Expose client port
-EXPOSE 4010
 
 # Build stage (build client and compile server to JS)
 FROM base AS build

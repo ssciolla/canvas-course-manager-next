@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "dev:server": "nodemon --config nmon_config.json server/app.ts",
-    "dev:client": "webpack serve --config webpack/webpack.dev.ts",
+    "dev:client": "webpack --watch --config webpack/webpack.dev.ts",
     "dev": "npm run dev:server & npm run dev:client",
     "build-client": "webpack --config webpack/webpack.prod.ts",
     "build-server": "tsc",
@@ -35,7 +35,6 @@
     "@types/react-dom": "^17.0.1",
     "@types/react-router-dom": "^5.1.7",
     "@types/webpack": "^4.41.26",
-    "@types/webpack-dev-server": "^3.11.3",
     "@types/webpack-merge": "^4.1.5",
     "@typescript-eslint/eslint-plugin": "^4.17.0",
     "@typescript-eslint/parser": "^4.17.0",
@@ -55,7 +54,6 @@
     "typescript": "^4.2.3",
     "webpack": "^5.24.2",
     "webpack-cli": "^4.5.0",
-    "webpack-dev-server": "^3.11.2",
     "webpack-merge": "^5.7.3"
   }
 }

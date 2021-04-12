@@ -6,23 +6,19 @@ import Database from 'ltijs-sequelize'
 
 import { Config } from './config'
 
-interface DevOptions {
-  isDev: true
-}
-
-interface ProdOptions {
-  isDev: false
+interface EnvOptions {
+  isDev: boolean,
   staticPath: string
 }
 
 class AppHandler {
   private readonly config: Config
   private readonly apiRouter: Router
-  private readonly envOptions: DevOptions | ProdOptions
+  private readonly envOptions: EnvOptions
 
   constructor (
     config: Config,
-    envOptions: DevOptions | ProdOptions,
+    envOptions: EnvOptions,
     apiRouter: Router
   ) {
     this.config = config
@@ -41,15 +37,7 @@ class AppHandler {
       { host: db.host, dialect: 'postgres', logging: false }
     )
 
-    let devMode
-    let staticPath
     const cookieOptions = { secure: true, sameSite: 'None' }
-    if (this.envOptions.isDev) {
-      // Setting devMode to true because cookies seem to be lost during proxy?
-      devMode = true
-    } else {
-      staticPath = this.envOptions.staticPath
-    }
 
     const provider = Provider.setup(
       lti.encryptionKey, // Key used to sign cookies and tokens
@@ -62,8 +50,7 @@ class AppHandler {
         // Set secure to true if the testing platform is in a different domain and https is being used
         // Set sameSite to 'None' if the testing platform is in a different domain and https is being used
         cookies: cookieOptions,
-        staticPath,
-        devMode
+        staticPath: this.envOptions.staticPath
       }
     )
 
@@ -72,11 +59,8 @@ class AppHandler {
     // Set lti launch callback
     // When receiving successful LTI launch redirects to app.
     provider.onConnect(async (token: IdToken, req: Request, res: Response) => {
-      console.log(token)
-      if (!this.envOptions.isDev) {
+      console.log(token.userInfo)
         return res.sendFile(path.join(this.envOptions.staticPath, 'index.html'))
-      }
-      return provider.redirect(res, `http://localhost:${server.clientPort}`)
     })
 
     await provider.deploy({ port: server.port })
