@@ -8,7 +8,7 @@ interface FeatureDataProps {
 
 const mergeSectionProps: FeatureDataProps = {
   id: 'MergeSections',
-  title: 'Merge Sections dispose',
+  title: 'Merge Sections',
   description: 'Combine sections into one Canvas site for easier management',
   ordinality: 1
 }
