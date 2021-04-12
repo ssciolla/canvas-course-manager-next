@@ -49,13 +49,6 @@ Note: The `npm run prod` command in `ccm_web/package.json` allows you to run the
 in a similar (but not identical) way to how it would be in production within a container.
 This exact command is not used in any Docker artifacts.
 
-### Debuggging with VS Code
-
-1. Go to `Run and Debug` option in the left navigation of VS Code
-2. Choose `CCM_Debug` Option from the dropdown and click the play looking button. This will get the debugger started.
-3. Put a breakpoint in the code and in the UI launch the tool, and see the code execution stops at the breakpoint.
-https://code.visualstudio.com/docs/nodejs/nodejs-debugging#_remote-debugging
-
 ### Notice(s) regarding external code used
 
 This repository contains modified portions of the npm package
