@@ -1,6 +1,5 @@
 interface ServerConfig {
   port: number
-  clientPort: number
 }
 
 interface LTIConfig {
@@ -50,8 +49,7 @@ export function validateConfig (env: Record<string, unknown>): Config | undefine
 
   try {
     server = {
-      port: validate<number>('PORT', Number(env.PORT), isNumber, 4000),
-      clientPort: validate<number>('CLIENT_PORT', Number(env.CLIENT_PORT), isNumber, 4010)
+      port: validate<number>('PORT', Number(env.PORT), isNumber, 4000)
     }
     lti = {
       encryptionKey: validate<string>('LTI_ENCRYPTION_KEY', env.LTI_ENCRYPTION_KEY, isString, 'LTIKEY'),

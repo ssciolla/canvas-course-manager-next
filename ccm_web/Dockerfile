@@ -9,9 +9,8 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 
-ARG SERVER_PORT
-EXPOSE ${SERVER_PORT}
-
+ARG PORT
+EXPOSE ${PORT}
 
 # Build stage (build client and compile server to JS)
 FROM base AS build
@@ -29,8 +28,8 @@ RUN npm install --production
 
 COPY --from=build /build/dist/ ./
 
-ARG SERVER_PORT
-EXPOSE ${SERVER_PORT}
+ARG PORT
+EXPOSE ${PORT}
 CMD node server/app.js
 
 # Done!
