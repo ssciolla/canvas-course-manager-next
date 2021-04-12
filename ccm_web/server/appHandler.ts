@@ -6,24 +6,19 @@ import Database from 'ltijs-sequelize'
 
 import { Config } from './config'
 
-interface DevOptions {
-  isDev: true,
-  staticPath: string
-}
-
-interface ProdOptions {
-  isDev: false
+interface EnvOptions {
+  isDev: boolean,
   staticPath: string
 }
 
 class AppHandler {
   private readonly config: Config
   private readonly apiRouter: Router
-  private readonly envOptions: DevOptions | ProdOptions
+  private readonly envOptions: EnvOptions
 
   constructor (
     config: Config,
-    envOptions: DevOptions | ProdOptions,
+    envOptions: EnvOptions,
     apiRouter: Router
   ) {
     this.config = config
