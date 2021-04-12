@@ -37,9 +37,7 @@ class AppHandler {
       { host: db.host, dialect: 'postgres', logging: false }
     )
 
-    let staticPath
     const cookieOptions = { secure: true, sameSite: 'None' }
-      staticPath = this.envOptions.staticPath
 
     const provider = Provider.setup(
       lti.encryptionKey, // Key used to sign cookies and tokens
@@ -52,7 +50,7 @@ class AppHandler {
         // Set secure to true if the testing platform is in a different domain and https is being used
         // Set sameSite to 'None' if the testing platform is in a different domain and https is being used
         cookies: cookieOptions,
-        staticPath
+        staticPath: this.envOptions.staticPath
       }
     )
 
