@@ -59,7 +59,7 @@ class AppHandler {
     // Set lti launch callback
     // When receiving successful LTI launch redirects to app.
     provider.onConnect(async (token: IdToken, req: Request, res: Response) => {
-      console.log(token["userInfo"])
+      console.log(token.userInfo)
         return res.sendFile(path.join(this.envOptions.staticPath, 'index.html'))
     })
 
