@@ -7,7 +7,7 @@ import Database from 'ltijs-sequelize'
 import { Config } from './config'
 
 interface EnvOptions {
-  isDev: boolean,
+  isDev: boolean
   staticPath: string
 }
 
@@ -60,7 +60,7 @@ class AppHandler {
     // When receiving successful LTI launch redirects to app.
     provider.onConnect(async (token: IdToken, req: Request, res: Response) => {
       console.log(token.userInfo)
-        return res.sendFile(path.join(this.envOptions.staticPath, 'index.html'))
+      return res.sendFile(path.join(this.envOptions.staticPath, 'index.html'))
     })
 
     await provider.deploy({ port: server.port })
