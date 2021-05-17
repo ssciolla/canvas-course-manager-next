@@ -33,6 +33,7 @@ function App (props: AppProps): JSX.Element {
   const features = allFeatures.map(f => f.features).flat()
 
   const [globals, isAuthenticated, loading, error] = useGlobals(props.ltiKey)
+  console.log(globals)
   if (isAuthenticated === undefined || loading) return <div className='App'><p>Loading...</p></div>
 
   if (error !== undefined) console.error(error)

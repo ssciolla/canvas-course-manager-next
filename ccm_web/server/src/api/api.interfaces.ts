@@ -4,4 +4,14 @@ export interface HelloData {
 
 export interface Globals {
   environment: 'production' | 'development'
+  userContext?: {
+    user: {
+      loginId?: string
+      hasAuthorized: boolean
+    }
+    course: {
+      canvasId?: number
+    }
+    enrollmentRoles?: string[]
+  }
 }

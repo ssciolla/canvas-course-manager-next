@@ -10,7 +10,7 @@ import baseLogger from './logger'
 
 const logger = baseLogger.child({ filePath: __filename })
 
-async function bootstrap () {
+async function bootstrap (): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule)
 
   const configService = app.get(ConfigService)
