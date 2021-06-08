@@ -19,7 +19,6 @@ export interface LTIConfig {
 }
 
 export interface CanvasConfig {
-  instanceURL: string
   apiClientId: string
   apiSecret: string
 }
@@ -76,7 +75,6 @@ export function validateConfig (env: Record<string, unknown>): Config {
       sessionSecret: validate<string>('SESSION_SECRET', env.SESSION_SECRET, isString, 'SESSIONSECRET')
     }
     canvas = {
-      instanceURL: validate<string>('CANVAS_INSTANCE_URL', env.CANVAS_INSTANCE_URL, isString),
       apiClientId: validate<string>('CANVAS_API_CLIENT_ID', env.CANVAS_API_CLIENT_ID, isString),
       apiSecret: validate<string>('CANVAS_API_SECRET', env.CANVAS_API_SECRET, isString)
     }

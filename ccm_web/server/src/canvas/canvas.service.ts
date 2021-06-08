@@ -14,10 +14,10 @@ const logger = baseLogger.child({ filePath: __filename })
 
 @Injectable()
 export class CanvasService {
-  clientId: string
-  secret: string
-  url: string
-  redirectURI: string
+  private readonly clientId: string
+  private readonly secret: string
+  private url: string | undefined
+  private readonly redirectURI: string
 
   constructor (
     private readonly configService: ConfigService,
@@ -29,11 +29,16 @@ export class CanvasService {
     const canvasConfig = configService.get('canvas') as CanvasConfig
     this.clientId = canvasConfig.apiClientId
     this.secret = canvasConfig.apiSecret
-    this.url = canvasConfig.instanceURL
     this.redirectURI = `https://${this.configService.get('server.domain') as string}/canvas/returnFromOAuth`
   }
 
+  setURL (apiBaseURL: string): void {
+    this.url = apiBaseURL
+  }
+
   getAuthURL (): string {
+    if (this.url === undefined) throw new Error('Canvas API URL has not been set!')
+
     const params = {
       client_id: this.clientId,
       response_type: 'code',
@@ -50,6 +55,7 @@ export class CanvasService {
     Make a call to the Canvas API to create token
     https://canvas.instructure.com/doc/api/file.oauth_endpoints.html#post-login-oauth2-token
     */
+    if (this.url === undefined) throw new Error('Canvas API URL has not been set!')
 
     const params = {
       grant_type: 'authorization_code',

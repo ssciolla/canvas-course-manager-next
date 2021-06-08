@@ -56,8 +56,11 @@ export class LTIService implements BeforeApplicationShutdown {
     provider.onConnect(async (token: IdToken, req: Request, res: Response) => {
       logger.debug(`The LTI launch was successful! User info: ${JSON.stringify(token.userInfo)}`)
       const customLTIVariables = token.platformContext.custom
-      if (customLTIVariables.login_id === undefined) {
-        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ lti_error: 'LTI launch is missing custom attributes; please check the LTI configuration in Canvas.' })
+      // TO DO: write a better validation routine to handle several properties
+      if (customLTIVariables.login_id === undefined || customLTIVariables.api_base_url === undefined) {
+        return res
+          .status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .json({ lti_error: 'LTI launch is missing custom attributes; please check the LTI configuration in Canvas.' })
       }
       const loginId = customLTIVariables.login_id as string
       try {
@@ -85,7 +88,8 @@ export class LTIService implements BeforeApplicationShutdown {
       // More data will be added to the session here later
       const sessionData = {
         ltiKey: res.locals.ltik as string,
-        userLoginId: loginId
+        userLoginId: loginId,
+        apiBaseURL: customLTIVariables.api_base_url as string
       }
       req.session.data = sessionData
       req.session.save((err) => {

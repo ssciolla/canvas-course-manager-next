@@ -24,7 +24,9 @@ export class CanvasController {
       throw new InternalServerErrorException('Session data is not available!')
     }
 
-    const { ltiKey, userLoginId } = req.session.data
+    const { ltiKey, userLoginId, apiBaseURL } = req.session.data
+
+    this.canvasService.setURL(apiBaseURL)
 
     const token = await this.canvasService.findToken(userLoginId)
     if (token !== null) {
