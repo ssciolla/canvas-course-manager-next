@@ -3,8 +3,9 @@ import { hasKey } from '../typeUtils'
 export interface OAuthResponseQuery {
   code: string
   state: string
+  error: string
+  error_description: string
 }
-
 export interface TokenResponseBody {
   access_token: string
   token_type: 'Bearer'
