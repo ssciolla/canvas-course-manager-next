@@ -44,13 +44,13 @@ export class CanvasController {
   */
   @Get('returnFromOAuth')
   async returnFromOAuth (
-    @Query() query: OAuthResponseQuery , @Req() req: Request, @Res() res: Response
+    @Query() query: OAuthResponseQuery, @Req() req: Request, @Res() res: Response
   ): Promise<void> {
     logger.debug('Comparing session to state parameter, and creating new Canvas token if matching')
     logger.debug(`Session ID: ${req.sessionID}`)
     logger.debug(JSON.stringify(req.session, null, 2))
 
-    if (query.error !== 'undefined') {
+    if (typeof (query.error) !== 'undefined') {
       logger.error(`Something went wrong with error ${query.error} and description ${query.error_description}`)
       throw new InternalServerErrorException(query.error_description)
     }
