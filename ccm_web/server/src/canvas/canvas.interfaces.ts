@@ -1,11 +1,13 @@
 import { hasKeys } from '../typeUtils'
 
+// OAuth
+
 export interface OAuthResponseQuery {
   code: string
   state: string
 }
 
-export interface TokenResponseBody {
+interface TokenBaseResponseBody {
   access_token: string
   token_type: 'Bearer'
   user: {
@@ -14,9 +16,16 @@ export interface TokenResponseBody {
     global_id: string
     effective_locale: string
   }
-  refresh_token: string
   expires_in: number
 }
+
+export interface TokenCodeResponseBody extends TokenBaseResponseBody {
+  refresh_token: string
+}
+
+export interface TokenRefreshResponseBody extends TokenBaseResponseBody {}
+
+// Entities
 
 export interface CanvasCourseBase {
   id: number
@@ -26,6 +35,8 @@ export interface CanvasCourseBase {
 export interface CanvasCourse extends CanvasCourseBase {
   course_code: string
 }
+
+// Errors
 
 interface CanvasError {
   message: string
