@@ -2,9 +2,11 @@ import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { CanvasToken } from '../canvas/canvas.model'
+import { UserNotFoundError } from './user.errors'
 import { UserToUpsert } from './user.interfaces'
 import { User } from './user.model'
 
+import { DatabaseError } from '../errors'
 import baseLogger from '../logger'
 
 const logger = baseLogger.child({ filePath: __filename })
@@ -30,22 +32,25 @@ export class UserService {
     return [record, created]
   }
 
-  async findUserByLoginId (loginId: string): Promise<User | null> {
+  async findUserByLoginId (loginId: string): Promise<User> {
+    let user: User | null = null
     try {
-      const user = await this.userModel.findOne({
+      user = await this.userModel.findOne({
         where: { loginId },
         include: [{ model: this.canvasTokenModel }]
       })
-      if (user === null) {
-        logger.error(`User ${loginId} is not in the database.`)
-      }
-      return user
     } catch (error) {
       logger.error(
         'An error occurred while fetching the User record from the database: ',
         JSON.stringify(error, null, 2)
       )
-      return null
+      throw new DatabaseError(JSON.stringify(error, null, 2))
     }
+
+    if (user === null) {
+      logger.error(`User ${loginId} is not in the database.`)
+      throw new UserNotFoundError(loginId)
+    }
+    return user
   }
 }
