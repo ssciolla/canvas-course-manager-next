@@ -5,6 +5,7 @@ import {
 
 import { OAuthResponseQuery } from './canvas.interfaces'
 import { CanvasService } from './canvas.service'
+import { UserService } from '../user/user.service'
 
 import baseLogger from '../logger'
 
@@ -12,7 +13,7 @@ const logger = baseLogger.child({ filePath: __filename })
 
 @Controller('canvas')
 export class CanvasController {
-  constructor (private readonly canvasService: CanvasService) {}
+  constructor (private readonly canvasService: CanvasService, private readonly userService: UserService) {}
 
   @Get('redirectOAuth')
   async redirectToOAuth (
@@ -26,9 +27,8 @@ export class CanvasController {
     }
 
     const { ltiKey, userLoginId } = req.session.data
-
-    const token = await this.canvasService.findToken(userLoginId)
-    if (token !== null) {
+    const user = await this.userService.findUserByLoginId(userLoginId)
+    if (user.canvasToken !== undefined) {
       logger.debug(`User ${userLoginId} already has a CanvasToken record; redirecting to home page...`)
       return res.redirect(`/?ltik=${ltiKey}`)
     }
@@ -62,8 +62,8 @@ export class CanvasController {
 
     // Create token for user
     const { ltiKey, userLoginId } = req.session.data
-    await this.canvasService.createTokenForUser(userLoginId, query.code)
-
+    const user = await this.userService.findUserByLoginId(userLoginId)
+    await this.canvasService.createTokenForUser(user, query.code)
     res.redirect(`/?ltik=${ltiKey}`)
   }
 }
